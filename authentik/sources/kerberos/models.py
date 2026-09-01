@@ -28,8 +28,11 @@ from authentik.core.models import (
 from authentik.core.types import UILoginButton, UserSettingSerializer
 from authentik.flows.challenge import RedirectChallenge
 from authentik.lib.config import advisory_lock_db_alias
+from authentik.lib.models import InternallyManagedMixin
 from authentik.lib.sync.incoming.models import IncomingSyncSource
+from authentik.lib.sync.models import Sync
 from authentik.lib.utils.time import fqdn_rand
+from authentik.tasks.models import Task
 from authentik.tasks.schedules.common import ScheduleSpec
 
 LOGGER = get_logger()
@@ -187,7 +190,7 @@ class KerberosSource(IncomingSyncSource):
         )
 
     @property
-    def sync_lock(self) -> pglock.advisory:
+    def start_sync_lock(self) -> pglock.advisory:
         """Lock for syncing Kerberos to prevent multiple parallel syncs happening"""
         return pglock.advisory(
             lock_id=f"goauthentik.io/{connection.schema_name}/sources/kerberos/sync/{self.slug}",
@@ -373,6 +376,42 @@ class Krb5ConfContext:
             os.environ["KRB5_CONFIG"] = self._previous
         else:
             del os.environ["KRB5_CONFIG"]
+
+
+class KerberosSourceSync(Sync):
+    tasks = models.ManyToManyField(
+        Task,
+        related_name="+",
+        through="KerberosSourceSyncTask",
+        through_fields=("kerberos_source_sync", "task"),
+    )
+    source = models.ForeignKey(KerberosSource, on_delete=models.CASCADE)
+
+    users_count = models.PositiveBigIntegerField(default=0)
+
+    class Meta:
+        default_permissions = []
+        verbose_name = _("Kerberos source sync")
+        verbose_name_plural = _("Kerberos source syncs")
+
+    def __str__(self):
+        return f"Kerberos Source ({self.source.pk}) Sync ({self.pk})"
+
+
+class KerberosSourceSyncTask(InternallyManagedMixin, models.Model):
+    pk = models.CompositePrimaryKey("kerberos_source_sync", "task")
+    kerberos_source_sync = models.ForeignKey(
+        KerberosSourceSync, on_delete=models.CASCADE, related_name="+"
+    )
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="+")
+
+    class Meta:
+        default_permissions = []
+        verbose_name = _("Kerberos source sync task")
+        verbose_name_plural = _("Kerberos source sync tasks")
+
+    def __str__(self):
+        return f"Kerberos Source Sync ({self.kerberos_source_sync.pk}) Task ({self.task.pk})"
 
 
 class KerberosSourcePropertyMapping(PropertyMapping):

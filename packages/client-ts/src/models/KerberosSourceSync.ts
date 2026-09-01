@@ -19,9 +19,9 @@ import { StatusDfaEnumFromJSON, StatusDfaEnumToJSON } from "./StatusDfaEnum";
 /**
  *
  * @export
- * @interface LDAPSourceSync
+ * @interface KerberosSourceSync
  */
-export interface LDAPSourceSync {
+export interface KerberosSourceSync {
     /**
      *
      */
@@ -50,32 +50,12 @@ export interface LDAPSourceSync {
      *
      */
     usersCount?: number;
-    /**
-     *
-     */
-    groupsCount?: number;
-    /**
-     *
-     */
-    membershipCount?: number;
-    /**
-     *
-     */
-    groupHierarchyCount?: number;
-    /**
-     *
-     */
-    userDeletionsCount?: number;
-    /**
-     *
-     */
-    groupDeletionsCount?: number;
 }
 
 /**
- * Check if a given object implements the LDAPSourceSync interface.
+ * Check if a given object implements the KerberosSourceSync interface.
  */
-export function instanceOfLDAPSourceSync(value: object): value is LDAPSourceSync {
+export function instanceOfKerberosSourceSync(value: object): value is KerberosSourceSync {
     if (!("pk" in value) || value["pk"] === undefined) return false;
     if (!("tasks" in value) || value["tasks"] === undefined) return false;
     if (
@@ -96,14 +76,14 @@ export function instanceOfLDAPSourceSync(value: object): value is LDAPSourceSync
     return true;
 }
 
-export function LDAPSourceSyncFromJSON(json: any): LDAPSourceSync {
-    return LDAPSourceSyncFromJSONTyped(json, false);
+export function KerberosSourceSyncFromJSON(json: any): KerberosSourceSync {
+    return KerberosSourceSyncFromJSONTyped(json, false);
 }
 
-export function LDAPSourceSyncFromJSONTyped(
+export function KerberosSourceSyncFromJSONTyped(
     json: any,
     ignoreDiscriminator: boolean,
-): LDAPSourceSync {
+): KerberosSourceSync {
     if (json == null) {
         return json;
     }
@@ -116,23 +96,15 @@ export function LDAPSourceSyncFromJSONTyped(
         status: json["status"] == null ? undefined : StatusDfaEnumFromJSON(json["status"]),
         source: json["source"],
         usersCount: json["users_count"] == null ? undefined : json["users_count"],
-        groupsCount: json["groups_count"] == null ? undefined : json["groups_count"],
-        membershipCount: json["membership_count"] == null ? undefined : json["membership_count"],
-        groupHierarchyCount:
-            json["group_hierarchy_count"] == null ? undefined : json["group_hierarchy_count"],
-        userDeletionsCount:
-            json["user_deletions_count"] == null ? undefined : json["user_deletions_count"],
-        groupDeletionsCount:
-            json["group_deletions_count"] == null ? undefined : json["group_deletions_count"],
     };
 }
 
-export function LDAPSourceSyncToJSON(json: any): LDAPSourceSync {
-    return LDAPSourceSyncToJSONTyped(json, false);
+export function KerberosSourceSyncToJSON(json: any): KerberosSourceSync {
+    return KerberosSourceSyncToJSONTyped(json, false);
 }
 
-export function LDAPSourceSyncToJSONTyped(
-    value?: Omit<LDAPSourceSync, "pk" | "tasks" | "startedAt" | "finishedAt"> | null,
+export function KerberosSourceSyncToJSONTyped(
+    value?: Omit<KerberosSourceSync, "pk" | "tasks" | "startedAt" | "finishedAt"> | null,
     ignoreDiscriminator: boolean = false,
 ): any {
     if (value == null) {
@@ -143,10 +115,5 @@ export function LDAPSourceSyncToJSONTyped(
         status: StatusDfaEnumToJSON(value["status"]),
         source: value["source"],
         users_count: value["usersCount"],
-        groups_count: value["groupsCount"],
-        membership_count: value["membershipCount"],
-        group_hierarchy_count: value["groupHierarchyCount"],
-        user_deletions_count: value["userDeletionsCount"],
-        group_deletions_count: value["groupDeletionsCount"],
     };
 }

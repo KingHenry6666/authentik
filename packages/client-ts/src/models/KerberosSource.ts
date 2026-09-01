@@ -169,6 +169,10 @@ export interface KerberosSource {
      * When to trigger sync for outgoing providers
      */
     syncOutgoingTriggerMode?: SyncOutgoingTriggerModeEnum;
+    /**
+     *
+     */
+    readonly lastSync: string;
 }
 
 /**
@@ -217,6 +221,13 @@ export function instanceOfKerberosSource(value: object): value is KerberosSource
         return false;
     if (!("realm" in value) || value["realm"] === undefined) return false;
     if (!("connectivity" in value) || value["connectivity"] === undefined) return false;
+    if (
+        (!("lastSync" in (value as Record<string, any>)) &&
+            !("last_sync" in (value as Record<string, any>))) ||
+        ((value as Record<string, any>)["lastSync"] === undefined &&
+            (value as Record<string, any>)["last_sync"] === undefined)
+    )
+        return false;
     return true;
 }
 
@@ -296,6 +307,7 @@ export function KerberosSourceFromJSONTyped(
             json["sync_outgoing_trigger_mode"] == null
                 ? undefined
                 : SyncOutgoingTriggerModeEnumFromJSON(json["sync_outgoing_trigger_mode"]),
+        lastSync: json["last_sync"],
     };
 }
 
@@ -315,6 +327,7 @@ export function KerberosSourceToJSONTyped(
         | "iconUrl"
         | "iconThemedUrls"
         | "connectivity"
+        | "lastSync"
     > | null,
     ignoreDiscriminator: boolean = false,
 ): any {
