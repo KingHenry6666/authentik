@@ -10,9 +10,9 @@
  * Do not edit the class manually.
  */
 
-import { parseDateTime } from "../runtime";
-import type { SystemInfoRuntime } from "./SystemInfoRuntime";
-import { SystemInfoRuntimeFromJSON, SystemInfoRuntimeToJSON } from "./SystemInfoRuntime";
+import { parseDateTime } from "../runtime.js";
+import type { SystemInfoRuntime } from "./SystemInfoRuntime.js";
+import { SystemInfoRuntimeFromJSON, SystemInfoRuntimeToJSON } from "./SystemInfoRuntime.js";
 
 /**
  * Get system information.
